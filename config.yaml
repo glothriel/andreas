@@ -1,0 +1,61 @@
+baseURL: 'http://example.org/'
+languageCode: 'pl'
+DefaultContentLanguage: pl
+title: 'Andreas Karagiorgis'
+theme: "stack"
+### Custom menu
+### See https://docs.stack.jimmycai.com/configuration/custom-menu.html
+### To remove about, archive and search page menu item, remove `menu` field from their FrontMatter
+menu:
+    main: []
+
+
+
+languages:
+    pl:
+        languageName: Polski
+        title: Andreas Karagiorgis - strona osobista
+        weight: 1
+    en:
+        languageName: English
+        title: Andreas Karagiorgis - personal blog
+        weight: 2
+        
+        params:
+          footer:
+              customText: Website managed by my son
+
+          sidebar:
+              emoji: 🎨
+              subtitle: Greek artist living in Poland
+
+params:
+  mainSections:
+      - posts
+  featuredImageField: image
+  rssFullContent: true
+  favicon:
+
+  footer:
+      since: 2020
+      customText: Strona zarządzana przez mojego syna
+
+  dateFormat:
+      published: "2006-01-02"
+      lastUpdated: "2006-01-02T15:04"
+
+  sidebar:
+      emoji: 🎨
+      subtitle: Grecki artysta mieszkąjący w Legnicy
+      avatar:
+          enabled: true
+          local: true
+          src: img/avatar.png
+  widgets:
+    homepage:
+        - type: search
+        - type: archives
+          params:
+              limit: 5
+    page:
+        - type: toc
