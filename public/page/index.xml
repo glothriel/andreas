@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Pages on Andreas Karagiorgis - strona osobista</title>
+        <link>http://example.org/page/</link>
+        <description>Recent content in Pages on Andreas Karagiorgis - strona osobista</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>pl</language>
+        <lastBuildDate>Sun, 03 Apr 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/page/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>O mnie</title>
+        <link>http://example.org/page/about/</link>
+        <pubDate>Sun, 03 Apr 2022 00:00:00 +0000</pubDate>
+        
+        <guid>http://example.org/page/about/</guid>
+        <description>&lt;img src="http://example.org/podworko.jpg" alt="Featured image of post O mnie" /&gt;&lt;p&gt;Pisarstwem zajmowałem się dawno temu, debiutując w legnickim tygodniku „Konkrety” w latach siedemdziesiątych ubiegłego wieku. Potem zająłem się malarstwem, miałem wystawy w kilku galeriach w Grecji i w warszawskiej galerii “Arka”, ale głównie bywam artystą ulicznym bo maluję i sprzedaję na miejscu obrazki z greckiej wyspy Santorini.&lt;/p&gt;
+&lt;p&gt;Obecnie wracam z wskrzeszoną pasją do literackiej przygody – opublikowane tu opowiadania są efektem tego powrotu.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Andreas Karagiorgis&lt;/strong&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Opowiadania</title>
+        <link>http://example.org/page/archives/</link>
+        <pubDate>Tue, 28 May 2019 00:00:00 +0000</pubDate>
+        
+        <guid>http://example.org/page/archives/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Search</title>
+        <link>http://example.org/page/search/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>http://example.org/page/search/</guid>
+        <description></description>
+        </item>
+        
+    </channel>
+</rss>

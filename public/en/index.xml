@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Andreas Karagiorgis - personal blog</title>
+        <link>http://example.org/en/</link>
+        <description>Recent content on Andreas Karagiorgis - personal blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>pl</language><atom:link href="http://example.org/en/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>About me</title>
+        <link>http://example.org/en/page/about/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>http://example.org/en/page/about/</guid>
+        <description>&lt;img src="http://example.org/podworko.jpg" alt="Featured image of post About me" /&gt;&lt;p&gt;My name is Andreas Karagiorgis, I’ve been a street artist in Kamari, Santorini since 40 years. I specialized in handcrafting souvenirs in the form of paintings – watercolors, acryllic on cloth, wood and stone. All my offerings are 100% hand-made and unique.&lt;/p&gt;
+&lt;p&gt;The COVID-19 situation and my age forced me to stay with my family in Poland, so I decided to use the power of internet to share my art with the world.&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

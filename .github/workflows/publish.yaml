@@ -1,0 +1,23 @@
+on:
+  push:
+    branches: ["main"]
+
+name: Publish the page
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Create rclone config directory
+        shell: mkdir -p /github/home/.config/rclone/
+
+      - name: Populate rclone config file
+        shell: echo ${{ secrets.RCLONE_CONF }} > /github/home/.config/rclone/rclone.conf
+
+      - name: rclone
+        uses: wei/rclone@v1
+        with:
+          args: copy public remote:/home/vbmntcj/www/ --sftp-pass=$(rclone obscure "${{ secrets.SFTP_PASS }}")
