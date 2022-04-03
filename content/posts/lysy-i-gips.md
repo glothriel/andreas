@@ -1,7 +1,7 @@
 ---
 title: "Łysy i gips"
 date: 2020-11-20
-draft: true
+draft: false
 ---
 
 Do małego zapyziałego sklepiku z materiałami budowlanymi wchodzi łysy facet w średnim wieku i rozgląda się po półkach i podłodze. Jestem rzeźbiarzem mówi do sprzedawcy i potrzebuję gipsu na formę
