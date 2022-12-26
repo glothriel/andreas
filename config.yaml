@@ -2,7 +2,10 @@ baseURL: 'https://andreas.karagiorgis.pl/'
 languageCode: 'pl'
 DefaultContentLanguage: pl
 title: 'Andreas Karagiorgis'
-theme: "stack"
+theme:
+    - andreas
+    - baguettebox
+    - stack
 ### Custom menu
 ### See https://docs.stack.jimmycai.com/configuration/custom-menu.html
 ### To remove about, archive and search page menu item, remove `menu` field from their FrontMatter
