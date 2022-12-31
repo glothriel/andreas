@@ -31,6 +31,10 @@ languages:
           sidebar:
               emoji: 🎨
               subtitle: Greek artist living in Poland
+              avatar:
+                enabled: true
+                local: true
+                src: img/avatar.png
 
 params:
   mainSections:
