@@ -10,14 +10,6 @@ menu:
 
 
 {{< rawhtml >}}
-<hr/>
-<i style="color: grey">Notka od Kostka: Nie wszystkie prace są gotowe</i>
-{{</rawhtml >}}
-
-
-
-
-{{< rawhtml >}}
 <center style="font-size: 1.3em">Wnukom</center>
 <center>Cyprianowi i Teodorowi</center>
 <center>z okazji</center>
@@ -41,7 +33,7 @@ menu:
   {{% galimg target="0007.png" title="4) Do Teodora" %}}VIII 2022 | Do Teodora | Może odkryjesz po latach, że domy to ożywiona i nieożywiona materia?{{% /galimg %}}
   {{% galimg target="0008.png" title="4) Do Cypriana" %}}VIII 2022 | Do Cypriana | Twoje i brata odkrywcze spacery wśród zdziczałych drzewek owocowych. I reszta...{{% /galimg %}}
   {{% galimg target="0009.png" title="5) Do Teodora" %}}XI 2022 | Do Teodora | Kiedyś pewnie zapytacie kogo przedstawia ten radosny portret rodzinny.{{% /galimg %}}
-  {{% galimg target="0010.png" title="5) Do Cypriana" %}}XI 2022 | Do Cypriana | ??? {{% /galimg %}}
+  {{% galimg target="0010.png" title="5) Do Cypriana" %}}XI 2022 | Do Cypriana | Ciekawe czy będziesz pamiętać marmury, diabelski młyn i karmienie fok... {{% /galimg %}}
   {{% galimg target="0011.png" title="6) Do Teodora" %}}X 2022 | Do Teodora | Tato był pilotem, a mama się przyglądała...{{% /galimg %}}
   {{% galimg target="0012.png" title="6) Do Cypriana" %}}X 2022 | Do Cypriana | Ach, te wyprawy samochodem do dziadków i tajemnicze, świecące przedmioty zwisające z sufitu...{{% /galimg %}}
   {{% galimg target="0013.png" title="7) Do Teodora" %}}XI 2022 | Do Teodora | Wasze wychwycone przez ostatnie miesiące pierwsze dźwięki gaworzenia...{{% /galimg %}}
