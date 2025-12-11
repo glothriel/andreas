@@ -3,32 +3,34 @@ on:
     branches: ["main"]
 
 name: Publish the page
+
+env:
+  HUGO_IMAGE: hugomods/hugo:exts-0.139.5
+
 jobs:
   publish:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v2
-        with:
-          hugo-version: '0.139.5'
-          extended: true
-
-      - name: Build
-        run: hugo --minify
+      - name: Build with Hugo
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/src \
+            ${{ env.HUGO_IMAGE }} \
+            --minify
 
       - name: Install rclone
-        shell: bash
-        run: sudo apt install rclone -y
+        run: sudo apt-get update && sudo apt-get install -y rclone
 
       - name: Configure remote
-        shell: bash
         run: rclone config create remote sftp
 
-
       - name: Copy the files
-        shell: bash
-        run: rclone copy public remote:/home/vbmntcj/www/ --sftp-pass=$(rclone obscure "${{ secrets.SFTP_PASS }}") --sftp-host="${{ secrets.SFTP_HOST }}" --sftp-user="${{ secrets.SFTP_USER }}"
+        run: |
+          rclone copy public remote:/home/vbmntcj/www/ \
+            --sftp-pass=$(rclone obscure "${{ secrets.SFTP_PASS }}") \
+            --sftp-host="${{ secrets.SFTP_HOST }}" \
+            --sftp-user="${{ secrets.SFTP_USER }}"
