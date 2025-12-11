@@ -1,5 +1,5 @@
 ---
-title: Kalendarz 2025 v1
+title: Kalendarz 2025
 
 menu:
     main: 
