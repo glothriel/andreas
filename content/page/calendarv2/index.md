@@ -1,5 +1,5 @@
 ---
-title: Kalendarz 2026
+title: Kalendarz 2026 (odrzucony projekt)
 
 menu:
     main: 
@@ -8,7 +8,7 @@ menu:
             icon: calendar
 ---
 
-Jest to druga wersja kalendarza, który przygotowuję na rok 2026.
+Jest to druga wersja kalendarza, który przygotowuję na rok 2026. Raczej odrzucony projekt.
 
 {{< gallery >}}
   {{% galimg target="1.jpg" title="Styczeń" %}}Styczeń{{% /galimg %}}
