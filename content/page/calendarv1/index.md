@@ -1,5 +1,5 @@
 ---
-title: Kalendarz 2025
+title: Kalendarz 2026
 
 menu:
     main: 
@@ -8,7 +8,7 @@ menu:
             icon: calendar
 ---
 
-Jest to pierwsza wersja kalendarza, który przygotowuję na rok 2025.
+Jest to pierwsza wersja kalendarza, który przygotowuję na rok 2026.
 
 {{< gallery >}}
   {{% galimg target="1.jpg" title="Styczeń" %}}Styczeń{{% /galimg %}}
