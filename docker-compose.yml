@@ -1,6 +1,8 @@
+x-hugo-image: &hugo-image hugomods/hugo:exts-0.139.5
+
 services:
   hugo:
-    image: hugomods/hugo:exts-0.139.5
+    image: *hugo-image
     volumes:
       - .:/src
     ports:
