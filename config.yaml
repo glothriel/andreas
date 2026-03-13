@@ -37,6 +37,9 @@ languages:
                 src: img/avatar.png
 
 params:
+  author:
+      name: Andreas Karagiorgis
+      email: kontakt@andreas.karagiorgis.pl
   mainSections:
       - posts
   featuredImageField: image
