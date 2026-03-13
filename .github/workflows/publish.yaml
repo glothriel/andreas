@@ -1,36 +1,54 @@
+name: Deploy to GitHub Pages
+
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main
+  workflow_dispatch:
 
-name: Publish the page
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
-env:
-  HUGO_IMAGE: hugomods/hugo:exts-0.139.5
+concurrency:
+  group: pages
+  cancel-in-progress: true
 
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
 
-      - name: Build with Hugo
-        run: |
-          docker run --rm \
-            -v ${{ github.workspace }}:/src \
-            ${{ env.HUGO_IMAGE }} \
-            --minify
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
 
-      - name: Install rclone
-        run: sudo apt-get update && sudo apt-get install -y rclone
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          extended: true
 
-      - name: Configure remote
-        run: rclone config create remote sftp
+      - name: Build
+        env:
+          HUGO_ENVIRONMENT: production
+        run: hugo --minify
 
-      - name: Copy the files
-        run: |
-          rclone copy public remote:/home/vbmntcj/www/ \
-            --sftp-pass=$(rclone obscure "${{ secrets.SFTP_PASS }}") \
-            --sftp-host="${{ secrets.SFTP_HOST }}" \
-            --sftp-user="${{ secrets.SFTP_USER }}"
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy GitHub Pages artifact
+        id: deployment
+        uses: actions/deploy-pages@v4
