@@ -1,0 +1,362 @@
+#!/usr/bin/env python3
+"""Images of the site live outside git: in Cloudflare R2 (primary) and on GHCR as OCI
+artifacts (backup). images.lock.json in the repo says which files belong where.
+
+    scripts/images status          what is missing, changed or new compared to the lock
+    scripts/images pull            fetch everything in the lock (cache -> R2 -> GHCR)
+    scripts/images push            upload new/changed images to R2 and GHCR, rewrite the lock
+
+Layout:
+  R2    <bucket>/blobs/sha256/<sha256>                  one object per file, never overwritten
+  GHCR  ghcr.io/glothriel/andreas-images:<gallery>-<hash>   one tar of the whole gallery
+  .images-cache/blobs/sha256/<sha256>                   local copy, hardlinked into content/
+
+Credentials:
+  R2    R2_ENDPOINT, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET from the environment,
+        otherwise (outside CI) from the Bitwarden item "andreas-r2" via bin/bwx.
+  GHCR  GHCR_USER + GHCR_TOKEN, otherwise `gh auth token` (push needs write:packages:
+        `gh auth refresh -s write:packages`). Pull also works anonymously if the package is public.
+
+rclone and oras run from pinned Docker images, so nothing has to be installed.
+"""
+
+import argparse
+import hashlib
+import json
+import os
+import shutil
+import subprocess
+import sys
+import tarfile
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+CONTENT = ROOT / "content"
+LOCK = ROOT / "images.lock.json"
+CACHE = ROOT / ".images-cache"
+BLOBS = CACHE / "blobs" / "sha256"
+R2_PREFIX = "blobs/sha256"
+OCI_REPO = "ghcr.io/glothriel/andreas-images"
+OCI_SOURCE = "https://github.com/glothriel/andreas"
+OCI_ARTIFACT_TYPE = "application/vnd.andreas.gallery.v1"
+OCI_LAYER_TYPE = "application/vnd.andreas.gallery.layer.v1.tar"
+BW_ITEM = "andreas-r2"
+RCLONE_IMAGE = "rclone/rclone:1.68.2"
+ORAS_IMAGE = "ghcr.io/oras-project/oras:v1.2.0"
+IMAGE_EXT = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".tif", ".tiff", ".heic", ".avif"}
+
+
+def log(*a):
+    print(*a, file=sys.stderr, flush=True)
+
+
+def die(msg):
+    log(f"images: {msg}")
+    sys.exit(1)
+
+
+def sha256(path):
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        while chunk := f.read(1 << 20):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+# ---------------------------------------------------------------- lock & scan
+
+
+def load_lock():
+    if not LOCK.exists():
+        return {"version": 1, "galleries": {}}
+    return json.loads(LOCK.read_text())
+
+
+def save_lock(lock):
+    lock["galleries"] = dict(sorted(lock["galleries"].items()))
+    LOCK.write_text(json.dumps(lock, indent=2, ensure_ascii=False) + "\n")
+
+
+def scan():
+    """{gallery dir (relative to repo): {file name: {"sha256", "size"}}} for images on disk."""
+    out = {}
+    for p in sorted(CONTENT.rglob("*")):
+        if p.is_file() and p.suffix.lower() in IMAGE_EXT:
+            gal = p.parent.relative_to(ROOT).as_posix()
+            out.setdefault(gal, {})[p.name] = {"sha256": sha256(p), "size": p.stat().st_size}
+    return out
+
+
+def slug(gallery):
+    return Path(gallery).relative_to("content").as_posix().replace("/", "-")
+
+
+def tree_hash(files):
+    lines = "".join(f"{f['sha256']}  {name}\n" for name, f in sorted(files.items()))
+    return hashlib.sha256(lines.encode()).hexdigest()
+
+
+def file_ok(path, entry):
+    return path.is_file() and path.stat().st_size == entry["size"] and sha256(path) == entry["sha256"]
+
+
+def link(src, dst):
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    tmp = dst.with_name(dst.name + ".images-tmp")
+    tmp.unlink(missing_ok=True)
+    try:
+        os.link(src, tmp)
+    except OSError:
+        shutil.copy2(src, tmp)
+    tmp.replace(dst)
+
+
+def cache_blob(path, digest):
+    blob = BLOBS / digest
+    if not (blob.exists() and blob.stat().st_size == path.stat().st_size):
+        link(path, blob)
+    return blob
+
+
+# ---------------------------------------------------------------- credentials
+
+
+def r2_creds(required):
+    keys = ("R2_ENDPOINT", "R2_ACCESS_KEY_ID", "R2_SECRET_ACCESS_KEY", "R2_BUCKET")
+    if all(os.environ.get(k) for k in keys):
+        return {k: os.environ[k] for k in keys}
+    if os.environ.get("CI"):
+        if required:
+            die("R2_* variables are not set")
+        return None
+    log(f"images: reading R2 credentials from Bitwarden item {BW_ITEM!r}")
+    r = subprocess.run([ROOT / "bin" / "bwx", "item", BW_ITEM], capture_output=True, text=True)
+    if r.returncode:
+        log(r.stderr.strip())
+        if required:
+            die("no R2 credentials")
+        return None
+    item = json.loads(r.stdout)
+    fields = {f["name"]: f["value"] for f in item.get("fields") or []}
+    return {
+        "R2_ENDPOINT": item["login"]["uris"][0]["uri"],
+        "R2_ACCESS_KEY_ID": item["login"]["username"],
+        "R2_SECRET_ACCESS_KEY": item["login"]["password"],
+        "R2_BUCKET": fields["bucket"],
+    }
+
+
+def ghcr_creds(required):
+    user, token = os.environ.get("GHCR_USER"), os.environ.get("GHCR_TOKEN")
+    if user and token:
+        return user, token
+    if not os.environ.get("CI") and shutil.which("gh"):
+        t = subprocess.run(["gh", "auth", "token"], capture_output=True, text=True)
+        u = subprocess.run(["gh", "api", "user", "-q", ".login"], capture_output=True, text=True)
+        if t.returncode == 0 and u.returncode == 0:
+            return u.stdout.strip(), t.stdout.strip()
+    if required:
+        die("no GHCR credentials (set GHCR_USER/GHCR_TOKEN or log in with gh)")
+    return None
+
+
+# ---------------------------------------------------------------- docker tools
+
+
+def docker(image, args, env=None, stdin=None, capture=False, workdir=CACHE):
+    workdir.mkdir(parents=True, exist_ok=True)
+    cmd = ["docker", "run", "--rm", *(["-i"] if stdin is not None else []),
+           "--user", f"{os.getuid()}:{os.getgid()}", "-e", "HOME=/tmp",
+           "-v", f"{workdir}:/data", "-w", "/data"]
+    for k in env or {}:
+        cmd += ["-e", k]  # value comes from our environment, never from argv
+    cmd += [image, *args]
+    r = subprocess.run(cmd, env={**os.environ, **(env or {})}, input=stdin, text=True,
+                       capture_output=capture)
+    return r
+
+
+def rclone(creds, args):
+    env = {
+        "RCLONE_CONFIG": "/tmp/rclone.conf",
+        "RCLONE_CONFIG_R2_TYPE": "s3",
+        "RCLONE_CONFIG_R2_PROVIDER": "Cloudflare",
+        "RCLONE_CONFIG_R2_ENDPOINT": creds["R2_ENDPOINT"],
+        "RCLONE_CONFIG_R2_ACCESS_KEY_ID": creds["R2_ACCESS_KEY_ID"],
+        "RCLONE_CONFIG_R2_SECRET_ACCESS_KEY": creds["R2_SECRET_ACCESS_KEY"],
+        "RCLONE_CONFIG_R2_NO_CHECK_BUCKET": "true",
+    }
+    return docker(RCLONE_IMAGE, args, env=env).returncode == 0
+
+
+def oras(args, creds, capture=False):
+    if creds:
+        args = [*args, "-u", creds[0], "--password-stdin"]
+    r = docker(ORAS_IMAGE, args, stdin=creds[1] if creds else None, capture=capture)
+    if capture and r.returncode:
+        log(r.stderr.strip())
+    return r
+
+
+# ---------------------------------------------------------------- commands
+
+
+def cmd_status(_):
+    lock, disk = load_lock()["galleries"], scan()
+    dirty = False
+    for gal in sorted(set(lock) | set(disk)):
+        locked, here = lock.get(gal, {}).get("files", {}), disk.get(gal, {})
+        missing = [n for n in locked if n not in here]
+        changed = [n for n in locked if n in here and here[n]["sha256"] != locked[n]["sha256"]]
+        new = [n for n in here if n not in locked]
+        ok = len(locked) - len(missing) - len(changed)
+        print(f"{gal}: {ok} ok" + "".join(f", {len(x)} {w}" for x, w in
+                                         ((missing, "missing"), (changed, "changed"), (new, "new")) if x))
+        for w, xs in (("missing", missing), ("changed", changed), ("new", new)):
+            for n in xs:
+                print(f"  {w}: {n}")
+        dirty |= bool(missing or changed or new)
+    return 1 if dirty else 0
+
+
+def cmd_pull(args):
+    BLOBS.mkdir(parents=True, exist_ok=True)
+    lock = load_lock()["galleries"]
+    todo = {}  # (gallery, name) -> entry
+    for gal, g in lock.items():
+        for name, entry in g["files"].items():
+            if not file_ok(ROOT / gal / name, entry):
+                todo[(gal, name)] = entry
+    log(f"images: {sum(len(g['files']) for g in lock.values()) - len(todo)} present, {len(todo)} to fetch")
+
+    def place_from_cache():
+        for (gal, name), entry in list(todo.items()):
+            blob = BLOBS / entry["sha256"]
+            if blob.is_file() and file_ok(blob, entry):
+                link(blob, ROOT / gal / name)
+                del todo[(gal, name)]
+
+    place_from_cache()
+
+    if todo and args.source in ("auto", "r2"):
+        creds = r2_creds(required=args.source == "r2")
+        if creds:
+            want = sorted({e["sha256"] for e in todo.values()})
+            (CACHE / "want.txt").write_text("".join(f"{h}\n" for h in want))
+            log(f"images: fetching {len(want)} blobs from R2")
+            if not rclone(creds, ["copy", "--files-from", "/data/want.txt", "--transfers", "8",
+                                  f"r2:{creds['R2_BUCKET']}/{R2_PREFIX}", "/data/blobs/sha256"]):
+                log("images: R2 fetch failed")
+            place_from_cache()
+
+    if todo and args.source in ("auto", "ghcr"):
+        creds = ghcr_creds(required=False)
+        for gal in sorted({gal for gal, _ in todo}):
+            ref = lock[gal]["oci"]
+            out = CACHE / "oci" / "pull" / slug(gal)
+            shutil.rmtree(out, ignore_errors=True)
+            out.mkdir(parents=True)
+            log(f"images: fetching {ref} from GHCR")
+            pull = ["pull", ref, "-o", f"/data/oci/pull/{slug(gal)}"]
+            # a token without read:packages fails even on a public package: retry anonymously
+            if oras(pull, creds).returncode and (not creds or oras(pull, None).returncode):
+                log(f"images: GHCR fetch of {gal} failed")
+                continue
+            for tar in out.glob("*.tar"):
+                with tarfile.open(tar) as t:
+                    for m in t:
+                        if not m.isfile():
+                            continue
+                        tmp = BLOBS / f".{os.getpid()}.part"
+                        with t.extractfile(m) as src, open(tmp, "wb") as dst:
+                            shutil.copyfileobj(src, dst)
+                        tmp.replace(BLOBS / sha256(tmp))
+            shutil.rmtree(out)
+        place_from_cache()
+
+    for gal, name in todo:
+        log(f"images: still missing {gal}/{name}")
+    return 1 if todo else 0
+
+
+def cmd_push(args):
+    BLOBS.mkdir(parents=True, exist_ok=True)
+    lock = load_lock()
+    disk = scan()
+    gone = [f"{gal}/{n}" for gal, g in lock["galleries"].items() for n in g["files"]
+            if n not in disk.get(gal, {})]
+    if gone and not args.prune:
+        die(f"{len(gone)} locked files are not on disk (e.g. {gone[0]}): run `pull` first, "
+            "or pass --prune if you deleted them on purpose")
+
+    changed = [gal for gal, files in disk.items()
+               if args.force or lock["galleries"].get(gal, {}).get("files") != files]
+    if not changed and not gone:
+        log("images: nothing to push")
+        return 0
+
+    # R2: every blob, content-addressed; existing objects are skipped
+    creds = r2_creds(required=True)
+    for gal, files in disk.items():
+        for name, f in files.items():
+            cache_blob(ROOT / gal / name, f["sha256"])
+    want = sorted({f["sha256"] for gal in changed for f in disk[gal].values()})
+    (CACHE / "want.txt").write_text("".join(f"{h}\n" for h in want))
+    log(f"images: uploading up to {len(want)} blobs to R2")
+    if not rclone(creds, ["copy", "--files-from", "/data/want.txt", "--ignore-existing",
+                          "--transfers", "8", "/data/blobs/sha256",
+                          f"r2:{creds['R2_BUCKET']}/{R2_PREFIX}"]):
+        die("R2 upload failed, lock not updated")
+
+    # GHCR: one tar per changed gallery
+    gh = ghcr_creds(required=True)
+    oci = {gal: lock["galleries"][gal]["oci"] for gal in disk if gal in lock["galleries"]}
+    for gal in changed:
+        s = slug(gal)
+        tag = f"{OCI_REPO}:{s}-{tree_hash(disk[gal])[:12]}"
+        work = CACHE / "oci" / "push"
+        work.mkdir(parents=True, exist_ok=True)
+        tar = work / f"{s}.tar"
+        with tarfile.open(tar, "w", format=tarfile.PAX_FORMAT) as t:
+            for name in sorted(disk[gal]):
+                info = t.gettarinfo(ROOT / gal / name, arcname=name)
+                info.mtime, info.uid, info.gid, info.uname, info.gname, info.mode = 0, 0, 0, "", "", 0o644
+                with open(ROOT / gal / name, "rb") as f:
+                    t.addfile(info, f)
+        log(f"images: pushing {tag}")
+        r = docker(ORAS_IMAGE, ["push", tag, "--artifact-type", OCI_ARTIFACT_TYPE,
+                                "--annotation", f"org.opencontainers.image.source={OCI_SOURCE}",
+                                "--annotation", f"org.opencontainers.image.description=andreas site images: {gal}",
+                                "-u", gh[0], "--password-stdin",
+                                f"{s}.tar:{OCI_LAYER_TYPE}"],
+                   stdin=gh[1], workdir=work)
+        if r.returncode:
+            die(f"GHCR push of {gal} failed, lock not updated")
+        r = docker(ORAS_IMAGE, ["resolve", tag, "-u", gh[0], "--password-stdin"],
+                   stdin=gh[1], capture=True)
+        if r.returncode:
+            die(f"could not resolve {tag}: {r.stderr.strip()}")
+        oci[gal] = f"{tag}@{r.stdout.strip()}"
+        tar.unlink()
+
+    lock["galleries"] = {gal: {"oci": oci[gal], "files": files} for gal, files in disk.items()}
+    save_lock(lock)
+    log(f"images: pushed {len(changed)} galleries, {LOCK.name} updated - commit it")
+    return 0
+
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    sub = p.add_subparsers(dest="cmd", required=True)
+    sub.add_parser("status")
+    pl = sub.add_parser("pull")
+    pl.add_argument("--source", choices=("auto", "r2", "ghcr"), default="auto")
+    ps = sub.add_parser("push")
+    ps.add_argument("--prune", action="store_true", help="drop locked files that were deleted from disk")
+    ps.add_argument("--force", action="store_true", help="re-push every gallery to GHCR")
+    args = p.parse_args()
+    sys.exit({"status": cmd_status, "pull": cmd_pull, "push": cmd_push}[args.cmd](args))
+
+
+if __name__ == "__main__":
+    main()

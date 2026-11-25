@@ -1,2 +1,19 @@
 public/*
 !public/.gitkeep
+# Hugo's cache of resized images and compiled SCSS: regenerated on every build
+resources/_gen/
+# gallery originals live in R2 + GHCR, see images.lock.json and scripts/images
+.images-cache/
+content/**/*.png
+content/**/*.jpg
+content/**/*.jpeg
+content/**/*.webp
+content/**/*.gif
+content/**/*.tif
+content/**/*.tiff
+content/**/*.heic
+content/**/*.avif
+content/**/*.PNG
+content/**/*.JPG
+content/**/*.JPEG
+__pycache__/

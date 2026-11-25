@@ -1,12 +1,24 @@
-.PHONY: serve build clean
+.PHONY: serve build clean shell images-pull images-push images-status
 
 # Start development server
-serve:
+serve: images-pull
 	docker compose up
 
 # Build the site
-build:
+build: images-pull
 	docker compose run --rm hugo --minify
+
+# Fetch gallery originals listed in images.lock.json (R2, falling back to GHCR)
+images-pull:
+	scripts/images pull
+
+# Upload new/changed gallery images to R2 + GHCR and update images.lock.json
+images-push:
+	scripts/images push
+
+# Compare images on disk with images.lock.json
+images-status:
+	scripts/images status
 
 # Clean generated files
 clean:
@@ -15,4 +27,3 @@ clean:
 # Enter hugo container shell
 shell:
 	docker compose run --rm hugo sh
-

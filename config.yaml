@@ -2,6 +2,8 @@ baseURL: 'https://andreas.karagiorgis.pl/'
 languageCode: 'pl'
 DefaultContentLanguage: pl
 title: 'Andreas Karagiorgis'
+# resizing the full-size gallery originals from scratch (CI has no cache) takes minutes
+timeout: 10m
 theme:
     - andreas
     - baguettebox
@@ -69,3 +71,9 @@ params:
               limit: 5
     page:
         - type: toc
+
+# Page-bundle images are published only when a template asks for them (.RelPermalink),
+# so the 10+ MB originals never land in public/, only their resized copies.
+cascade:
+  build:
+    publishResources: false

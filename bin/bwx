@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+# bwx: `bw` that asks for the master password once (trimmed copy of nas-infra/bin/bwx;
+# shares its session file, so unlocking in either one unlocks both).
+#
+#   bwx item NAME|ID   the one item with exactly this name (JSON); exit 4 if none, 3 if several
+#   bwx session        print BW_SESSION (unlocking if needed)
+#   bwx lock           forget the session now
+#   bwx <any bw args>  plain bw with the session set
+#
+# The password prompt is a desktop dialog (kdialog/zenity) or the terminal
+# (systemd-ask-password). The session key lives in $XDG_RUNTIME_DIR (tmpfs, 0600)
+# and expires after BWX_TTL seconds (default 8h).
+set -euo pipefail
+
+ttl=${BWX_TTL:-28800}
+f="${XDG_RUNTIME_DIR:?XDG_RUNTIME_DIR not set}/bwx-session"
+
+prompt() {
+    local msg="Bitwarden master password"
+    if [[ -n "${WAYLAND_DISPLAY:-}${DISPLAY:-}" ]] && command -v kdialog >/dev/null; then
+        kdialog --title Bitwarden --password "$msg"
+    elif [[ -n "${WAYLAND_DISPLAY:-}${DISPLAY:-}" ]] && command -v zenity >/dev/null; then
+        zenity --password --title Bitwarden
+    else
+        systemd-ask-password "$msg:"
+    fi
+}
+
+fresh() {
+    [[ -s $f ]] && (($(date +%s) - $(stat -c %Y "$f") < ttl)) &&
+        BW_SESSION=$(<"$f") bw status 2>/dev/null | grep -q '"status":"unlocked"'
+}
+
+session() {
+    if fresh; then
+        cat "$f"
+        return
+    fi
+    rm -f "$f"
+    local pw s
+    pw=$(prompt) || { echo "bwx: cancelled" >&2; exit 1; }
+    s=$(BWX_PW="$pw" bw unlock --raw --nointeraction --passwordenv BWX_PW) || { echo "bwx: unlock failed" >&2; exit 1; }
+    unset pw
+    (umask 077 && printf %s "$s" >"$f")
+    BW_SESSION=$s bw sync >/dev/null || true
+    printf %s "$s"
+}
+
+# exactly one item by name (bw's own lookup is a substring search) or by id
+item() {
+    local name=$1
+    if [[ $name =~ ^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$ ]]; then
+        bw get item "$name"
+        return
+    fi
+    bw list items --search "$name" | python3 -I -c '
+import json, sys
+name = sys.argv[1]
+hits = [i for i in json.load(sys.stdin) if i["name"] == name]
+if len(hits) != 1:
+    print(f"bwx: {len(hits)} items named {name!r}", file=sys.stderr)
+    sys.exit(3 if hits else 4)
+print(json.dumps(hits[0]))
+' "$name"
+}
+
+case "${1:-}" in
+item)
+    name=${2:?usage: bwx item NAME|ID}
+    export BW_SESSION
+    BW_SESSION=$(session)
+    item "$name"
+    ;;
+lock)
+    rm -f "$f"
+    bw lock >/dev/null 2>&1 || true
+    ;;
+session)
+    session
+    ;;
+*)
+    BW_SESSION=$(session)
+    export BW_SESSION
+    exec bw "$@"
+    ;;
+esac

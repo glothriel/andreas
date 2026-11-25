@@ -1,0 +1,41 @@
+{{- $target := ( .Get 0 ) -}}
+{{- if .IsNamedParams -}}
+  {{- $target = ( .Get "target" ) -}}
+{{- end -}}
+{{- $img := $.Page.Resources.GetMatch $target -}}
+
+{{- if $img -}}
+
+  {{- $thumb := 0 -}}
+  {{- if .Get "thumb" -}}
+    {{- $thumb = ( $.Page.Resources.GetMatch ( .Get "thumb" ) ) -}}
+  {{- else -}}
+    {{- $thumbMode := ( .Get "mode" ) | default "fill" -}}
+    {{- $thumbSize := ( .Get "size" ) | default "200x150 smart" -}}
+    {{- if eq $thumbMode "fill" -}}
+      {{- $thumb = ( $img.Fill $thumbSize ) -}}
+    {{- else if eq $thumbMode "fit" -}}
+      {{- $thumb = ( $img.Fit $thumbSize ) -}}
+    {{- else if eq $thumbMode "resize" -}}
+      {{- $thumb = ( $img.Resize $thumbSize ) -}}
+    {{- else -}}
+      {{- errorf "Invalid thumbmail mode: must be one of fill, fit, or resize" -}}
+    {{- end -}}
+  {{- end -}}
+  {{- /* lightbox gets a web-sized copy, never the original (originals are 10+ MB PNGs) */ -}}
+  {{- $full := $img.Fit ( ( .Get "full" ) | default "2400x2400 webp q85" ) -}}
+  {{- $caption := trim .Inner " \n" -}}
+  {{- $title := ( .Get "title" ) | default $caption -}}
+
+  <a href="{{ $full.RelPermalink }}"
+    {{- with $caption }} data-caption="{{ . }}"{{ end -}}
+    {{- with $title }} title="{{ . }}"{{ end -}}
+    >
+    <img src="{{ $thumb.RelPermalink }}"
+      {{- with $title }} alt="{{ . }}"{{ end -}}
+    />
+  </a>
+
+{{- else -}}
+  {{- errorf "galimg: image '%s' is nil!" $target -}}
+{{- end -}}

@@ -1,0 +1,277 @@
+{
+  "version": 1,
+  "galleries": {
+    "content/page/calendarv1": {
+      "oci": "ghcr.io/glothriel/andreas-images:page-calendarv1-2b292517cae0@sha256:f2d1614ba26ac4c1c9946bd0c2b407e264c404b258f5311350f5cdaf02167dc2",
+      "files": {
+        "1.jpg": {
+          "sha256": "8aa5f2379fa804b3beec22c0cecd41f052aadc2d44f2ea3c20d6c64ad12e6b3d",
+          "size": 1488867
+        },
+        "10.jpg": {
+          "sha256": "7d2e3aa418eb9a2d389899aeaecdb0ea5991008cb2f4386ec94929856016d8a0",
+          "size": 1998311
+        },
+        "11.jpg": {
+          "sha256": "272a1cccced748e59e858205de7aee972f1a377e54beec77cd4b4395683013fb",
+          "size": 1412897
+        },
+        "12.jpg": {
+          "sha256": "3b74570419eb8374633fa4cf6b146d3cbd66ce85d44836efa0ab9083a7f6bb8b",
+          "size": 1973100
+        },
+        "2.jpg": {
+          "sha256": "4624f8d66b3e6ae7345c46cce3177245261a78e7130ffc5c994254f47997b303",
+          "size": 1341216
+        },
+        "3.jpg": {
+          "sha256": "df19eb62f441ee869e28ea52d0cdb9e424c1ee82bda76724356b05165d5f4f52",
+          "size": 1442933
+        },
+        "4.jpg": {
+          "sha256": "21619a5bc75b55527c105a5148906c189201e44c811f0cc6243565d77c94a841",
+          "size": 1597450
+        },
+        "5.jpg": {
+          "sha256": "a29a02cf099d2decd954a32c0cf979c9f19f79b592ef71fdc46ea5e8faa52a50",
+          "size": 1951644
+        },
+        "6.jpg": {
+          "sha256": "07ba8590488f171cd1be43447dfa5d7477235fbe8f79923a57515e9b92d8cf1d",
+          "size": 2764207
+        },
+        "7.jpg": {
+          "sha256": "9c0f758caff9634b25291fc1583979961d1b8f7b2b823a4f3fd0eba3f1af214a",
+          "size": 1668480
+        },
+        "8.jpg": {
+          "sha256": "1f8914bbec1a6a620b195f2e0a1b8dd18714dc4288d3ae36c8665c0def9bbed8",
+          "size": 1901456
+        },
+        "9.jpg": {
+          "sha256": "c8d5e93552fd92b0fc11ad58bcb32506375ca5859b7721fc5b49d8b6965869c5",
+          "size": 1875365
+        }
+      }
+    },
+    "content/page/calendarv2": {
+      "oci": "ghcr.io/glothriel/andreas-images:page-calendarv2-7cacc8b8f85d@sha256:78f78f08ff1c9c61d29fb422b9d742d26a73241cff897b4af01432904e5593ae",
+      "files": {
+        "1.jpg": {
+          "sha256": "95b0c86724e4cab041b1bd4f3d7d1348a3b08dc986189b2b6214994eb7cd8893",
+          "size": 2235446
+        },
+        "10.jpg": {
+          "sha256": "64e46d335aa5933da89ae31630a40d9450d8ffbf0f7442ed801906f5f507f39d",
+          "size": 2713396
+        },
+        "11.jpg": {
+          "sha256": "f463d0568ce42f84511d4c371df761e1c9c39bc2a9176f6308fc291fe6956697",
+          "size": 2762953
+        },
+        "12.jpg": {
+          "sha256": "7a6c2b751e0193e6b65e5a082037ecb3272aea6e9493bbbc5997f11b26803ce4",
+          "size": 2398029
+        },
+        "2.jpg": {
+          "sha256": "50bbe8832bc189b1ac68560ad22c407bfedc42fdf9849df630f41d60f1afca04",
+          "size": 2892325
+        },
+        "3.jpg": {
+          "sha256": "3a29f8bcfb864f6332bbbb6eb2c39720d56994c5f85119e4d314cbcf678ee2e2",
+          "size": 2950245
+        },
+        "4.jpg": {
+          "sha256": "36a4ce12c7b8f6de707ea9ff94f940d0b8c93c41395989aa1d068f5500273414",
+          "size": 2942152
+        },
+        "5.jpg": {
+          "sha256": "c55561f0a22861b9f88ef7b3b6045d32f560c7d143a966393889797b1ed94a43",
+          "size": 2128563
+        },
+        "6.jpg": {
+          "sha256": "07d825e88c0943ba4a1ef5553d891b385bd79c2b6266fd941f40feb02299653f",
+          "size": 2488027
+        },
+        "7.jpg": {
+          "sha256": "ad8bcdca075c121e2d255e7e81880a09d330ecaeeff0fb9e75c790ad6ffc14ba",
+          "size": 2414076
+        },
+        "8.jpg": {
+          "sha256": "a490d34e4452390fb1c31c91cdb7987e60da0224cf39b36df41dfc2426eb2ffa",
+          "size": 2544165
+        },
+        "9.jpg": {
+          "sha256": "946b8ef894a8ec2f1a8fb14ee7e055ed24b25f41e61cf61d59f4a7f2c09d8885",
+          "size": 2113447
+        }
+      }
+    },
+    "content/page/grandchildren": {
+      "oci": "ghcr.io/glothriel/andreas-images:page-grandchildren-c88a95bfafb6@sha256:259ede3d6e3abca0122444fa6f830c1d036eaec1269085c079b1d4dc489496ef",
+      "files": {
+        "0001.png": {
+          "sha256": "2da73d18281b0b34e6040a6011ab042e3892c0f69d9843e3d38ced1974c85dce",
+          "size": 7876412
+        },
+        "0002.png": {
+          "sha256": "4c61c3bff509f22870d035906d407be793dfd941d02b42460e6fcba37a5d0e42",
+          "size": 11056835
+        },
+        "0003.png": {
+          "sha256": "0f6ea44d2044793539f76b201b83ecc9ecd4b7d964086dffede273e0b77ff15b",
+          "size": 6433056
+        },
+        "0004.png": {
+          "sha256": "2d17dfb657c19911977f983b1f1d54afdf6abad7d581dac0630fd5003dc94132",
+          "size": 8164164
+        },
+        "0005.png": {
+          "sha256": "7413caf8a7491b816028aeb1cb639864925b394c3070968ead1f106ec2be03a8",
+          "size": 7382745
+        },
+        "0006.png": {
+          "sha256": "b30ac6bde6c1dc9051661116a508f1c3424fd70540960ad871d98e527411f188",
+          "size": 9320933
+        },
+        "0007.png": {
+          "sha256": "e4e56cf8ba59426da4814f314c0dad548b687a8108270e1d06dfd8f17433cbd9",
+          "size": 6917151
+        },
+        "0008.png": {
+          "sha256": "6f36988caf2efd99acdfffd6dbf525877e8c03aae47177a783c9eb7f89dba8db",
+          "size": 8972206
+        },
+        "0009.png": {
+          "sha256": "d9b75a4b9fac6689f790c2949dc2f841b31e96107545f12a38ae8d676600d06a",
+          "size": 9996917
+        },
+        "0010.png": {
+          "sha256": "e69b42205caf21f4e507ef5c6551983f06bb7a48918d95ce6d16adc434a64562",
+          "size": 7577917
+        },
+        "0011.png": {
+          "sha256": "d7cb348ae571557b5383a0fb8cbda78d24442e3256d71b139cd44b220b21b9f4",
+          "size": 5513604
+        },
+        "0012.png": {
+          "sha256": "10ffc4f5eafc6bd16967deadfb9c0ead8d955fdb50a1b4a5d88a20ddf3560975",
+          "size": 6822772
+        },
+        "0013.png": {
+          "sha256": "282f0271bbbce6c1ad53e39b1bcde99016a0519b403923a83785aad964b00a27",
+          "size": 8085763
+        },
+        "0014.png": {
+          "sha256": "be888dc33319a56d3b87d43722ca99f840540d85a6aacfbc5530ded1329e8839",
+          "size": 10643221
+        },
+        "0015.png": {
+          "sha256": "fdc5b0712b9ce165fe8fea272df3f9347655d63f6041e425e25117599a7dee01",
+          "size": 8629956
+        },
+        "0016.png": {
+          "sha256": "d37acd2dbc5fa2d357b634158b70b7cc65d440ce2dce693781fc5c0ed85505b4",
+          "size": 8515401
+        },
+        "0017.png": {
+          "sha256": "2d8f0b85baee60bc238ba744088a330da7dd2e0bb12dab972e683569f3ec0fa8",
+          "size": 11897162
+        },
+        "0018.png": {
+          "sha256": "5db702e7d4be1c564e3ae2a5693b1a432d6225a4576378186b6d61fa4702ef4c",
+          "size": 8380601
+        },
+        "0019.png": {
+          "sha256": "6c3f1e7437da4f8867af5ec0f4b4ba4061289e80d92094c4c37601e229087088",
+          "size": 11549509
+        },
+        "0020.png": {
+          "sha256": "bd9958fa1f933e39a513d670983f4f95855c6262744da717416a559ccb2023a0",
+          "size": 9397040
+        },
+        "0021.png": {
+          "sha256": "0f7199ae33cc0a56e6e3ac91fa611801c4668e75c52a3c7b6fae2b7f0f1b3b4b",
+          "size": 9750285
+        },
+        "0022.png": {
+          "sha256": "ccfeb56c31e3d811970b68ae14c85cecb087e1c55b59ea391c8c04e26e8213fc",
+          "size": 8370518
+        },
+        "0023.png": {
+          "sha256": "b3fec1d424f91e92311f46a977c4897763ba41c64179adfc8f960a5497ce1ab4",
+          "size": 9891345
+        },
+        "0024.png": {
+          "sha256": "d18acd9ffde2fcc3dd51c77d75dd5de95aa699d9286b9b3500226102bdfe6663",
+          "size": 12168397
+        }
+      }
+    },
+    "content/page/snowman": {
+      "oci": "ghcr.io/glothriel/andreas-images:page-snowman-35b6f6682fce@sha256:86dc1f478b02c2fbbffb1746fcb0539f8a5fdb9b646184ecd5e56e184be7d78f",
+      "files": {
+        "1.jpg": {
+          "sha256": "d37dae95d058f4f64075152a23d9fd169b1215101591d689870108b93e653d46",
+          "size": 1220760
+        },
+        "10.jpg": {
+          "sha256": "e4d6cbaec0ce79a6c3de17a9c71027cc180a5c672c98f7865a24a9d2cd7971f3",
+          "size": 1106246
+        },
+        "11.jpg": {
+          "sha256": "d6a618235f3212d78386e12080ae0be221d9d8489c458a1b0233edabdf435875",
+          "size": 1145056
+        },
+        "12.jpg": {
+          "sha256": "15f68ebdd33c0b2f52683a44c2fa4b0d3f63c24482f660fca70e7b84e5c4ce36",
+          "size": 848591
+        },
+        "13.jpg": {
+          "sha256": "fdf834ba289bedfe3972ed75f23351cd626334715ef8eafc14611817ab439650",
+          "size": 943018
+        },
+        "14.jpg": {
+          "sha256": "60b71a38bf7685012e64c50a07327d3605167b8fe8207d80ae0a1582db812bc3",
+          "size": 1042511
+        },
+        "15.jpg": {
+          "sha256": "a7be5988bfcdf12a93085b431fe085483ac9cab4ff57ee58aac057374a5443f0",
+          "size": 1112662
+        },
+        "2.jpg": {
+          "sha256": "02c20dcb98bc43e7b854d1eee324ec2918cd19d278e0545166f348b03046da95",
+          "size": 1029557
+        },
+        "3.jpg": {
+          "sha256": "463e2a6d73a47ad5f4128b6ad459db05c70ce56926b38a4c0bfbe7fe8afb45cd",
+          "size": 1150813
+        },
+        "4.jpg": {
+          "sha256": "d9456833b1b18e984be058c8399b90c7c44ab35ffe0af8ba5282afae10563601",
+          "size": 1025289
+        },
+        "5.jpg": {
+          "sha256": "6842fc01a29dfa82c8c318a1eaa9bf51405b70ea3502293090085c7bf28ada00",
+          "size": 1020586
+        },
+        "6.jpg": {
+          "sha256": "903f44be1b3ca3243493b3924bc7927ba04cbaa74a4d28bbc30dd80dba480aac",
+          "size": 1082779
+        },
+        "7.jpg": {
+          "sha256": "9c7b0ac26fa876dd72623e6583d099826b142c3044d6998e938b49eb95eb2312",
+          "size": 1118362
+        },
+        "8.jpg": {
+          "sha256": "d5b722778e9368ebe77cfa1c553504223a1d7737f2b3d39e92f91bdd14c4c4f7",
+          "size": 908241
+        },
+        "9.jpg": {
+          "sha256": "36017360174ec9560b96c36c750a587d0704f061f2421433a3cd7f56e06c1bfb",
+          "size": 1053979
+        }
+      }
+    }
+  }
+}
