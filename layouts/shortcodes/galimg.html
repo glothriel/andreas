@@ -1,41 +1,14 @@
-{{- $target := ( .Get 0 ) -}}
-{{- if .IsNamedParams -}}
-  {{- $target = ( .Get "target" ) -}}
-{{- end -}}
+{{- /* {{% galimg target="1.jpg" title="Title" %}}Caption{{% /galimg %}}
+       Polaroid thumbnail; links to a web-sized copy (never the original) that the lightbox shows. */ -}}
+{{- $target := .Get "target" | default (.Get 0) -}}
 {{- $img := $.Page.Resources.GetMatch $target -}}
-
-{{- if $img -}}
-
-  {{- $thumb := 0 -}}
-  {{- if .Get "thumb" -}}
-    {{- $thumb = ( $.Page.Resources.GetMatch ( .Get "thumb" ) ) -}}
-  {{- else -}}
-    {{- $thumbMode := ( .Get "mode" ) | default "fill" -}}
-    {{- $thumbSize := ( .Get "size" ) | default "200x150 smart" -}}
-    {{- if eq $thumbMode "fill" -}}
-      {{- $thumb = ( $img.Fill $thumbSize ) -}}
-    {{- else if eq $thumbMode "fit" -}}
-      {{- $thumb = ( $img.Fit $thumbSize ) -}}
-    {{- else if eq $thumbMode "resize" -}}
-      {{- $thumb = ( $img.Resize $thumbSize ) -}}
-    {{- else -}}
-      {{- errorf "Invalid thumbmail mode: must be one of fill, fit, or resize" -}}
-    {{- end -}}
-  {{- end -}}
-  {{- /* lightbox gets a web-sized copy, never the original (originals are 10+ MB PNGs) */ -}}
-  {{- $full := $img.Fit ( ( .Get "full" ) | default "2400x2400 webp q85" ) -}}
-  {{- $caption := trim .Inner " \n" -}}
-  {{- $title := ( .Get "title" ) | default $caption -}}
-
-  <a href="{{ $full.RelPermalink }}"
-    {{- with $caption }} data-caption="{{ . }}"{{ end -}}
-    {{- with $title }} title="{{ . }}"{{ end -}}
-    >
-    <img src="{{ $thumb.RelPermalink }}"
-      {{- with $title }} alt="{{ . }}"{{ end -}}
-    />
-  </a>
-
-{{- else -}}
-  {{- errorf "galimg: image '%s' is nil!" $target -}}
-{{- end -}}
+{{- if not $img }}{{ errorf "galimg: image %q not found in %s" $target $.Page.File.Path }}{{ end -}}
+{{- $thumb := $img.Fill (.Get "size" | default "480x360 webp q75 Smart") -}}
+{{- $full := $img.Fit (.Get "full" | default "2400x2400 webp q85") -}}
+{{- $caption := trim .Inner " \n" | plainify -}}
+{{- $title := .Get "title" | default $caption -}}
+{{- $n := .Ordinal -}}
+<a class="snap" href="{{ $full.RelPermalink }}" data-title="{{ $title }}" data-caption="{{ if ne $caption $title }}{{ $caption }}{{ end }}" style="--r:{{ index (slice "-1.8deg" "1.2deg" "-.5deg" "2deg" ".8deg" "-1.3deg" "1.6deg") (mod $n 7) }};animation-delay:{{ add 200 (mul (math.Min $n 15) 35) }}ms">
+  <img src="{{ $thumb.RelPermalink }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}" alt="{{ $title }}" loading="lazy">
+  <span>{{ $title }}</span>
+</a>

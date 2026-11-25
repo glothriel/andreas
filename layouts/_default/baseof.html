@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="{{ site.Language.LanguageCode }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{{- $title := site.Title -}}
+{{- if not .IsHome }}{{ $title = printf "%s · %s" .Title site.Title }}{{ end }}
+<title>{{ $title }}</title>
+{{- $desc := site.Params.description -}}
+{{- with .Description }}{{ $desc = . }}{{ else }}{{ if and (not .IsHome) .Summary }}{{ $desc = .Summary | plainify | truncate 160 }}{{ end }}{{ end }}
+<meta name="description" content="{{ $desc }}">
+<meta property="og:title" content="{{ $title }}">
+<meta property="og:description" content="{{ $desc }}">
+<meta property="og:url" content="{{ .Permalink }}">
+{{- with partial "og-image.html" . }}
+<meta property="og:image" content="{{ . }}">
+<meta name="twitter:card" content="summary_large_image">
+{{- end }}
+{{- range .AllTranslations }}
+<link rel="alternate" hreflang="{{ .Language.Lang }}" href="{{ .Permalink }}">
+{{- end }}
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎨</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Fraunces:ital,opsz,wght@0,9..144,400;1,9..144,400&family=Nunito+Sans:wght@400;700&display=swap" rel="stylesheet">
+{{- $css := resources.Get "css/site.css" | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+{{- with .OutputFormats.Get "RSS" }}
+<link rel="alternate" type="application/rss+xml" href="{{ .RelPermalink }}" title="{{ site.Title }}">
+{{- end }}
+</head>
+<body data-home="{{ site.Home.RelPermalink }}"
+  data-i18n-more="{{ i18n "moreGalleries" }}" data-i18n-close="{{ i18n "close" }}">
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+
+{{ partial "desk.html" . }}
+
+{{- /* Overlay layer. On the home page it starts empty; on a gallery/story/about/contact
+       page it is rendered open, so every overlay has its own shareable URL and works
+       without JavaScript. site.js loads other pages' overlays into it with fetch(). */}}
+{{ block "overlay" . }}<div class="ov" id="ov"></div>{{ end }}
+
+<a class="plane-btn" href="{{ (partial "page.html" "contact").RelPermalink }}" data-ov aria-label="{{ i18n "write" }}" data-tip="{{ i18n "write" }}!">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"><path d="M22 2 2 9.5l8 3.5 3.5 8z"/><path d="M22 2 10 13"/></svg>
+</a>
+
+<div class="lb" id="lb" hidden>
+  <figure class="lb-fig"><img class="lb-img" alt=""><figcaption class="lb-cap"><b></b><span></span></figcaption></figure>
+  <button class="lb-btn lb-prev" aria-label="‹">‹</button>
+  <button class="lb-btn lb-next" aria-label="›">›</button>
+  <button class="lb-btn lb-close" aria-label="{{ i18n "close" }}">×</button>
+  <div class="lb-count"></div>
+</div>
+<div class="toast" id="toast">{{ i18n "sent" }}<small>{{ i18n "sentSub" }}</small></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.2"/></filter></svg>
+
+{{- $js := resources.Get "js/site.js" | js.Build (dict "minify" true) | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+</body>
+</html>

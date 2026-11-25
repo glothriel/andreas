@@ -1,76 +1,53 @@
 baseURL: 'https://andreas.karagiorgis.pl/'
-languageCode: 'pl'
-DefaultContentLanguage: pl
 title: 'Andreas Karagiorgis'
+defaultContentLanguage: pl
 # resizing the full-size gallery originals from scratch (CI has no cache) takes minutes
 timeout: 10m
-theme:
-    - andreas
-    - baguettebox
-    - stack
-### Custom menu
-### See https://docs.stack.jimmycai.com/configuration/custom-menu.html
-### To remove about, archive and search page menu item, remove `menu` field from their FrontMatter
-menu:
-    main: []
+enableRobotsTXT: true
+disableKinds: [taxonomy, term]
 
-
+permalinks:
+  page:
+    posts: /opowiadania/:filename/
+    page: /:filename/
 
 languages:
-    pl:
-        languageName: Polski
-        title: Andreas Karagiorgis - strona osobista
-        weight: 1
-    en:
-        languageName: English
-        title: Andreas Karagiorgis - personal blog
-        weight: 2
-        
-        params:
-          footer:
-              customText: Website managed by my son
-
-          sidebar:
-              emoji: 🎨
-              subtitle: Greek artist living in Poland
-              avatar:
-                enabled: true
-                local: true
-                src: img/avatar.png
+  pl:
+    languageName: Polski
+    languageCode: pl
+    weight: 1
+    title: Andreas Karagiorgis
+    params:
+      description: Akwarele z Santorini, ilustracje dla wnuków i opowiadania.
+  en:
+    languageName: English
+    languageCode: en
+    weight: 2
+    title: Andreas Karagiorgis
+    params:
+      description: Watercolours from Santorini, drawings for grandchildren and short stories.
+  el:
+    languageName: Ελληνικά
+    languageCode: el
+    weight: 3
+    title: Ανδρέας Καραγιώργης
+    params:
+      author: Ανδρέας Καραγιώργης
+      description: Ακουαρέλες από τη Σαντορίνη, σχέδια για τα εγγόνια και διηγήματα.
 
 params:
-  author:
-      name: Andreas Karagiorgis
-      email: kontakt@andreas.karagiorgis.pl
-  mainSections:
-      - posts
-  featuredImageField: image
-  rssFullContent: true
-  favicon:
+  author: Andreas Karagiorgis
+  # The contact widget posts straight into this Google Form (one inbox for every language).
+  # Field ids come from the form's page source (FB_PUBLIC_LOAD_DATA_).
+  contactForm:
+    action: https://docs.google.com/forms/d/e/1FAIpQLSeJgDM7wRRehAgYWUcWDJQW-iVXVq1-R2Mkbj-e9GDp-EFdGA/formResponse
+    nameField: entry.1602808160
+    messageField: entry.437352756
 
-  footer:
-      since: 2020
-      customText: Strona zarządzana przez mojego syna
-
-  dateFormat:
-      published: "2006-01-02"
-      lastUpdated: "2006-01-02T15:04"
-
-  sidebar:
-      emoji: 🎨
-      subtitle: Grecki artysta mieszkąjący w Legnicy
-      avatar:
-          enabled: true
-          local: true
-          src: img/avatar.png
-  widgets:
-    homepage:
-        - type: search
-        - type: archives
-          params:
-              limit: 5
-    page:
-        - type: toc
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
 
 # Page-bundle images are published only when a template asks for them (.RelPermalink),
 # so the 10+ MB originals never land in public/, only their resized copies.

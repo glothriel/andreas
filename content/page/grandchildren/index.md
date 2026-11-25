@@ -1,11 +1,7 @@
 ---
+date: 2023-05-01
 title: Wnuki
 
-menu:
-    main: 
-        weight: -61
-        params:
-            icon: mood-boy
 ---
 
 
@@ -45,7 +41,7 @@ menu:
   {{% galimg target="0019.png" title="10) Do Teodora" %}}II 2023 | Do Teodora | Podejrzewam, że łyżeczki są już przedłużeniem Waszych rączek.{{% /galimg %}}
   {{% galimg target="0020.png" title="10) Do Cypriana" %}}II 2023 | Do Cypriana | No tak. Tato już od dawna przynosi Wam kosze pełne owoców, a mama podaje Wam kawałki do spróbowania.{{% /galimg %}}
   {{% galimg target="0021.png" title="11) Do Teodora" %}}III 2023 | Do Teodora | Zgaduję, że od dawna dom dla Was jest już za mały.{{% /galimg %}}
-  {{% galimg target="0022.png" title="11) Do Cypriana" %}}III 2023 | Do Cypriana | Na pewno fruwacie, a tata jest polotem. siedzicie, wspinacie się, jeździcie. A może uganiacie się za kotami.{{% /galimg %}}
+  {{% galimg target="0022.png" title="11) Do Cypriana" %}}III 2023 | Do Cypriana | Na pewno fruwacie, a tata jest pilotem. Siedzicie, wspinacie się, jeździcie. A może uganiacie się za kotami.{{% /galimg %}}
   {{% galimg target="0023.png" title="12) Do Teodora" %}}IV 2023 | Do Teodora i Cypriana | Nie jestem pewien, ale podejrzewam, że od dłuższego czasu przedmioty, owoce a nawet koty uczą się latać...{{% /galimg %}}
   {{% galimg target="0024.png" title="12) Do Cypriana" %}}IV 2023 | Do Cypriana i Teodora | Nauki latania ciąg dalszy. Ale powoli, małymi krokami. Cieszyłem się każdym dniem Waszego pierwszego roku życia. I będę się cieszyć jeszcze przez wiele lat.{{% /galimg %}}
 {{< /gallery >}}

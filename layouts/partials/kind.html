@@ -1,0 +1,6 @@
+{{- /* Which overlay a page opens as: story, gallery, contact form or a plain card. */ -}}
+{{- $kind := "card" -}}
+{{- if eq .Section "posts" }}{{ $kind = "reader" }}
+{{- else if eq .Layout "contact" }}{{ $kind = "contact" }}
+{{- else if .Resources.ByType "image" }}{{ $kind = "album" }}{{ end -}}
+{{- return $kind -}}

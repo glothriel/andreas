@@ -1,0 +1,5 @@
+{{- /* A content/page/<name> page in the current language, falling back to the default one. */ -}}
+{{- $path := printf "/page/%s" . -}}
+{{- $p := site.GetPage $path -}}
+{{- if not $p }}{{ $p = (index site.Sites 0).GetPage $path }}{{ end -}}
+{{- return $p -}}

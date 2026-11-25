@@ -1,0 +1,32 @@
+{{- $about := partial "page.html" "about" -}}
+{{- $contact := partial "page.html" "contact" -}}
+<div class="page">
+  <header class="head">
+    <h1><a href="{{ site.Home.RelPermalink }}" data-close>{{ site.Params.author }}</a><svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 80 4, 180 2, 296 12"/></svg></h1>
+    <nav>
+      {{ with $about }}<a href="{{ .RelPermalink }}" data-ov>{{ i18n "about" }}</a>{{ end }}
+      {{ with $contact }}<a href="{{ .RelPermalink }}" data-ov>{{ i18n "write" }}</a>{{ end }}
+      {{ partial "langs.html" . }}
+    </nav>
+  </header>
+
+  <main class="main">
+    <div class="gals" id="gals">
+      {{ range $i, $g := partial "galleries.html" . }}{{ partial "tile.html" (dict "g" $g "i" $i) }}{{ end }}
+    </div>
+
+    <section class="notebook">
+      <span class="clip"></span>
+      <h2>{{ i18n "stories" }}</h2>
+      <div class="list">
+        {{ range partial "stories.html" . }}
+        <a class="story" href="{{ .RelPermalink }}" data-ov>
+          <svg viewBox="0 0 26 14" aria-hidden="true"><path d="M2 7h20M16 2l6 5-6 5"/></svg>
+          <span class="t"><b>{{ .Title }}</b><span class="m"><i>{{ .ReadingTime }} min</i></span></span>
+          <p>{{ with .Params.lead }}{{ . }}{{ else }}{{ .Summary | plainify | truncate 170 }}{{ end }}</p>
+        </a>
+        {{ end }}
+      </div>
+    </section>
+  </main>
+</div>

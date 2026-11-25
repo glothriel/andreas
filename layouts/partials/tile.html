@@ -1,0 +1,16 @@
+{{- /* A taped photo with a slow slideshow of ~5 images spread across the gallery. */ -}}
+{{- $g := .g -}}
+{{- $imgs := $g.Resources.ByType "image" -}}
+{{- $n := len $imgs -}}
+{{- $step := math.Max 1 (math.Ceil (div (float $n) 5)) | int -}}
+{{- $picks := slice (partial "cover.html" $g) -}}
+{{- range $j, $img := $imgs }}{{ if and (eq (mod (add $j 1) $step) 0) (lt (len $picks) 5) (ne $img (index $picks 0)) }}{{ $picks = $picks | append $img }}{{ end }}{{ end -}}
+<a class="tile" href="{{ $g.RelPermalink }}" data-ov style="--r:{{ index (slice "-1.4deg" "1.1deg" "-.6deg" "1.6deg" ".7deg" "-1.2deg") (mod .i 6) }};animation-delay:{{ mul .i 90 }}ms">
+  <span class="ph-box">
+    {{- range $k, $p := $picks }}
+    {{- $t := $p.Resize "900x webp q72" }}
+    <img class="ph{{ if eq $k 0 }} on{{ end }}" src="{{ $t.RelPermalink }}" width="{{ $t.Width }}" height="{{ $t.Height }}" alt="{{ if eq $k 0 }}{{ $g.Title }}{{ end }}"{{ if gt $k 0 }} loading="lazy"{{ end }}>
+    {{- end }}
+  </span>
+  <span class="cap"><b>{{ $g.Title }}</b><span class="n">{{ $n }}</span></span>
+</a>

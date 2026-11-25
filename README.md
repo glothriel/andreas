@@ -1,7 +1,34 @@
 # andreas.karagiorgis.pl
 
-Hugo site (`stack` theme + `baguettebox` galleries), published to GitHub Pages on every
-push to `main` (`.github/workflows/publish.yaml`).
+Hugo site with its own theme (`layouts/`, `assets/`, `i18n/`), published to GitHub Pages on
+every push to `main` (`.github/workflows/publish.yaml`).
+
+## How the site works
+
+One screen, a sketchbook: gallery tiles on the left, a notebook page with the stories on the
+right. Everything else opens as a paper sheet over it:
+
+| What | Content | URL | Opens as |
+|---|---|---|---|
+| Gallery | `content/page/<name>/` with images | `/<name>/` | album with polaroids + lightbox |
+| Story | `content/posts/<name>.md` | `/opowiadania/<name>/` | lined-paper reader |
+| About | `content/page/about/` | `/about/` | card with the photo `assets/img/andreas.png` |
+| Contact | `content/page/contact/` (`layout: contact`) | `/contact/` | letter that folds into a paper plane |
+
+Every one of those URLs is a real page (the desk with that sheet open), so links can be shared
+and the site works without JavaScript; `assets/js/site.js` just opens them in place.
+
+- **Gallery order**: front matter `date`, newest first. The tile grid resizes itself to fill
+  the screen; above 9 galleries the last tile becomes "+N galerii". Optional `cover: 3.jpg`
+  picks the first image of the tile slideshow.
+- **Story list**: newest first, reading time from Hugo, teaser from the first lines
+  (override with front matter `lead:`). Drafts are hidden in the production build.
+- **Contact** posts straight into the Google Form set in `config.yaml` (`params.contactForm`);
+  the e-mail field is appended to the message.
+- **Languages**: pl, en, el (flags in the header). UI strings are in `i18n/`. Galleries are
+  shared by all languages; stories, about and contact fall back to Polish when there is no
+  translation (`index.en.md` etc.).
+- `mockups/` (not in git) holds the static design mockups this theme came from.
 
 ## Images are not in git
 
@@ -37,7 +64,7 @@ Bitwarden (`andreas-r2`); `bin/bwx` prompts for the master password.
 
    Thumbnails default to `200x150 smart` (`size=`, `mode=fill|fit|resize`); the lightbox gets
    a webp up to 2400px (`full=`). Originals are never published.
-   For a menu entry, copy the front matter of `content/page/grandchildren/index.md`.
+   Give it a `date:` (newest galleries come first on the home page).
 3. `make serve` and check it looks right
 4. `make images-push`: uploads new files to R2 + GHCR and updates `images.lock.json`
 5. `git add content/page/<name>/index.md images.lock.json && git commit && git push`
@@ -59,5 +86,4 @@ Deleting: remove the file, then `scripts/images push --prune`.
   jq -j '.fields[]|select(.name=="bucket").value' <<<"$item" | gh secret set R2_BUCKET
   ```
 - **Hugo version** is pinned to the same version in `docker-compose.yml` and the workflow.
-  Newer Hugo dropped the built-in LibSass the `stack` theme needs.
 - **Local requirements**: docker, python3, `bw` (Bitwarden CLI, logged in), `gh`.

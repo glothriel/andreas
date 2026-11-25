@@ -1,0 +1,12 @@
+<section class="sheet album">
+  <header>
+    <h2>{{ .Title }}</h2>
+    <a class="x" href="{{ site.Home.RelPermalink }}" data-close>{{ i18n "close" }} ×</a>
+  </header>
+  <nav class="tabs">
+    {{- range partial "galleries.html" . }}
+    <a href="{{ .RelPermalink }}" data-ov class="{{ if eq .RelPermalink $.RelPermalink }}on{{ end }}">{{ .Title }}</a>
+    {{- end }}
+  </nav>
+  <div class="album-body">{{ .Content }}</div>
+</section>

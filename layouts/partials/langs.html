@@ -1,0 +1,12 @@
+{{- /* Flag switcher: the translation of this page if there is one, else that language's home. */ -}}
+{{- $page := . -}}
+<span class="langs">
+{{- range $i, $s := site.Sites }}
+  {{- $href := $s.Home.RelPermalink -}}
+  {{- range $page.AllTranslations }}{{ if eq .Language.Lang $s.Language.Lang }}{{ $href = .RelPermalink }}{{ end }}{{ end }}
+  <a href="{{ $href }}" hreflang="{{ $s.Language.Lang }}" title="{{ $s.Language.LanguageName }}" aria-label="{{ $s.Language.LanguageName }}"
+     class="{{ if eq $s.Language.Lang site.Language.Lang }}on{{ end }}" style="--r:{{ index (slice "-4deg" "3deg" "-2deg" "2deg") (mod $i 4) }}">
+    {{- partial "flag.html" $s.Language.Lang -}}
+  </a>
+{{- end }}
+</span>

@@ -1,0 +1,10 @@
+{{- $f := site.Params.contactForm -}}
+<form class="sheet letter" id="letter" action="{{ $f.action }}" method="post" data-name="{{ $f.nameField }}" data-message="{{ $f.messageField }}">
+  <a class="x" href="{{ site.Home.RelPermalink }}" data-close aria-label="{{ i18n "close" }}">×</a>
+  <h2>{{ i18n "writeTitle" }}</h2>
+  {{ with .Content }}<div class="letter-intro">{{ . }}</div>{{ end }}
+  <input name="{{ $f.nameField }}" required placeholder="{{ i18n "namePh" }}" autocomplete="name">
+  <input name="email" type="email" placeholder="{{ i18n "emailPh" }}" autocomplete="email">
+  <textarea name="{{ $f.messageField }}" required placeholder="{{ i18n "messagePh" }}"></textarea>
+  <button class="fold">{{ i18n "send" }} ✈</button>
+</form>

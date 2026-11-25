@@ -41,8 +41,7 @@ jobs:
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
-          # keep in sync with docker-compose.yml; newer Hugo dropped the built-in
-          # LibSass the stack theme needs (and resources/_gen no longer hides that)
+          # keep in sync with docker-compose.yml
           hugo-version: '0.139.5'
           extended: true
 

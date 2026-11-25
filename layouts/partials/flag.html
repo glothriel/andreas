@@ -1,0 +1,9 @@
+{{- if eq . "pl" -}}
+<svg class="flag" viewBox="0 0 16 10" preserveAspectRatio="none"><rect width="16" height="5" fill="#f7f4ee"/><rect y="5" width="16" height="5" fill="#d8394b"/></svg>
+{{- else if eq . "en" -}}
+<svg class="flag" viewBox="0 0 60 30" preserveAspectRatio="none"><rect width="60" height="30" fill="#24427a"/><path d="M0 0l60 30M60 0L0 30" stroke="#f7f4ee" stroke-width="6"/><path d="M0 0l60 30M60 0L0 30" stroke="#c8414e" stroke-width="2.4"/><path d="M30 0v30M0 15h60" stroke="#f7f4ee" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#c8414e" stroke-width="6"/></svg>
+{{- else if eq . "el" -}}
+<svg class="flag" viewBox="0 0 27 18" preserveAspectRatio="none"><rect width="27" height="18" fill="#2f6db3"/><path d="M0 3h27M0 7h27M0 11h27M0 15h27" stroke="#f7f4ee" stroke-width="2"/><rect width="10" height="10" fill="#2f6db3"/><path d="M5 0v10M0 5h10" stroke="#f7f4ee" stroke-width="2"/></svg>
+{{- else -}}
+<span class="flag flag-txt">{{ upper . }}</span>
+{{- end -}}

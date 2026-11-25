@@ -1,0 +1,9 @@
+{{- /* Every single page = the desk with this page's overlay already open. */ -}}
+{{ define "main" }}{{ end }}
+{{ define "overlay" }}
+{{- $kind := partial "kind.html" . -}}
+<div class="ov open" id="ov" data-kind="{{ $kind }}">
+  <a class="ov-dim" href="{{ site.Home.RelPermalink }}" data-close aria-label="{{ i18n "close" }}"></a>
+  {{ partial (printf "ov/%s.html" $kind) . }}
+</div>
+{{ end }}

@@ -1,0 +1,5 @@
+{{- $p := . -}}
+{{- if ne (partial "kind.html" .) "album" }}{{ $p = index (partial "galleries.html" .) 0 }}{{ end -}}
+{{- $url := "" -}}
+{{- with $p }}{{ with partial "cover.html" . }}{{ $url = (.Fill "1200x630 webp q80 Smart").Permalink }}{{ end }}{{ end -}}
+{{- return $url -}}

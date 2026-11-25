@@ -1,11 +1,7 @@
 ---
+date: 2025-11-20
 title: Kalendarz 2026
 
-menu:
-    main: 
-        weight: -61
-        params:
-            icon: calendar
 ---
 
 Jest to pierwsza wersja kalendarza, który przygotowuję na rok 2026.

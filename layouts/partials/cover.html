@@ -1,0 +1,5 @@
+{{- /* Gallery cover: front matter `cover: file.jpg`, else the first image. */ -}}
+{{- $imgs := .Resources.ByType "image" -}}
+{{- $c := index $imgs 0 -}}
+{{- with .Params.cover }}{{ with $.Resources.GetMatch . }}{{ $c = . }}{{ end }}{{ end -}}
+{{- return $c -}}

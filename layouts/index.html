@@ -1,11 +1,2 @@
-{{ define "body-class" }}article-page{{ end }}
-
-{{ define "main" }}
-    {{ partial "article/article.html" . }}
-    {{ partialCached "footer/footer" . }}
-{{ end }}
-
-{{ define "right-sidebar" }}
-    {{ partial "sidebar/right.html" (dict "Context" . "Scope" "homepage") }}
-{{ end }}
-
+{{- /* The home page is just the desk (baseof); nothing is open. */ -}}
+{{ define "main" }}{{ end }}

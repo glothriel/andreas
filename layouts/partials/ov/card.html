@@ -1,0 +1,7 @@
+<section class="sheet card">
+  <a class="x" href="{{ site.Home.RelPermalink }}" data-close aria-label="{{ i18n "close" }}">×</a>
+  {{- with resources.Get "img/andreas.png" }}{{ $p := .Resize "600x webp q80" }}
+  <figure class="pol"><img src="{{ $p.RelPermalink }}" width="{{ $p.Width }}" height="{{ $p.Height }}" alt="{{ site.Params.author }}"><figcaption>{{ i18n "photoCaption" }}</figcaption></figure>
+  {{- end }}
+  <div class="card-text">{{ .Content }}<div class="sig">{{ site.Params.author }}</div></div>
+</section>

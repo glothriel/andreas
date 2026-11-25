@@ -17,3 +17,5 @@ content/**/*.PNG
 content/**/*.JPG
 content/**/*.JPEG
 __pycache__/
+# static design mockups the theme came from (with copies of gallery images)
+mockups/

@@ -1,0 +1,13 @@
+<article class="sheet reader">
+  <div class="reader-progress"><i></i></div>
+  <a class="x" href="{{ site.Home.RelPermalink }}" data-close aria-label="{{ i18n "close" }}">×</a>
+  <div class="reader-page">
+    <p class="reader-meta">{{ .Date.Year }} · {{ .ReadingTime }} min</p>
+    <h1>{{ .Title }}</h1>
+    <div class="reader-text">{{ .Content }}</div>
+    {{- $next := slice }}{{ range partial "stories.html" . }}{{ if ne .RelPermalink $.RelPermalink }}{{ $next = $next | append . }}{{ end }}{{ end }}
+    <nav class="reader-nav">
+      {{- range first 3 $next }}<a href="{{ .RelPermalink }}" data-ov><small>{{ i18n "readNext" }}</small>{{ .Title }}</a>{{ end }}
+    </nav>
+  </div>
+</article>

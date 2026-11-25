@@ -1,0 +1,13 @@
+{{- /* Galleries = page bundles with images, taken from the default language so every
+       language has all of them; each one is swapped for its translation when there is one.
+       Newest (front matter date) first. */ -}}
+{{- $lang := site.Language.Lang -}}
+{{- $gals := slice -}}
+{{- range where (index site.Sites 0).RegularPages "Section" "page" -}}
+  {{- if .Resources.ByType "image" -}}
+    {{- $p := . -}}
+    {{- range .Translations }}{{ if eq .Language.Lang $lang }}{{ $p = . }}{{ end }}{{ end -}}
+    {{- $gals = $gals | append $p -}}
+  {{- end -}}
+{{- end -}}
+{{- return sort $gals "Date" "desc" -}}

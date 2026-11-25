@@ -1,11 +1,7 @@
 ---
+date: 2025-05-01
 title: Bałwanek
 
-menu:
-    main: 
-        weight: -61
-        params:
-            icon: user
 ---
 
 Prezent dla wnuków na trzecie urodziny.

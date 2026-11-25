@@ -1,11 +1,7 @@
 ---
+date: 2025-11-10
 title: Kalendarz 2026 (odrzucony projekt)
 
-menu:
-    main: 
-        weight: -62
-        params:
-            icon: calendar
 ---
 
 Jest to druga wersja kalendarza, który przygotowuję na rok 2026. Raczej odrzucony projekt.

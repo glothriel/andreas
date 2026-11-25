@@ -1,0 +1,4 @@
+{{- /* Stories in the current language, or the default-language ones if there are none. */ -}}
+{{- $s := where site.RegularPages "Section" "posts" -}}
+{{- if not $s }}{{ $s = where (index site.Sites 0).RegularPages "Section" "posts" }}{{ end -}}
+{{- return sort $s "Date" "desc" -}}
