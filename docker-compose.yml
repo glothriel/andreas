@@ -3,9 +3,14 @@ x-hugo-image: &hugo-image hugomods/hugo:exts-0.139.5
 services:
   hugo:
     image: *hugo-image
+    # run as the invoking user so generated files (resources/_gen, public/) aren't root-owned;
+    # the Makefile exports UID/GID, plain `docker compose` falls back to 1000
+    user: "${UID:-1000}:${GID:-1000}"
+    environment:
+      HOME: /tmp
+      HUGO_CACHEDIR: /tmp/hugo_cache
     volumes:
       - .:/src
     ports:
       - "1313:1313"
     command: server --bind 0.0.0.0 --buildDrafts --buildFuture
-

@@ -1,5 +1,9 @@
 .PHONY: serve build clean shell images-pull images-push images-status
 
+# docker-compose.yml runs hugo as this user
+export UID := $(shell id -u)
+export GID := $(shell id -g)
+
 # Start development server
 serve: images-pull
 	docker compose up
@@ -22,7 +26,7 @@ images-status:
 
 # Clean generated files
 clean:
-	rm -rf public resources/_gen
+	rm -rf public/* resources/_gen
 
 # Enter hugo container shell
 shell:
