@@ -1,57 +1,56 @@
 # andreas.karagiorgis.pl
 
-Strona Hugo (motyw `stack` + galerie `baguettebox`), publikowana na GitHub Pages
-przy każdym pushu na `main` (`.github/workflows/publish.yaml`).
+Hugo site (`stack` theme + `baguettebox` galleries), published to GitHub Pages on every
+push to `main` (`.github/workflows/publish.yaml`).
 
-## Obrazki są poza gitem
+## Images are not in git
 
-Oryginały galerii (`content/**/*.png|jpg|...`) **nie są w repo**. Leżą w:
+Gallery originals (`content/**/*.png|jpg|...`) are **not in the repo**. They live in:
 
-- **Cloudflare R2**: `blobs/sha256/<hash>`, każdy plik osobno, nic nie jest nadpisywane
-- **GHCR** (zapas): `ghcr.io/glothriel/andreas-images:<galeria>-<hash>`, jeden tar na galerię
+- **Cloudflare R2**: `blobs/sha256/<hash>`, one object per file, never overwritten
+- **GHCR** (backup): `ghcr.io/glothriel/andreas-images:<gallery>-<hash>`, one tar per gallery
 
-Co należy do strony, mówi `images.lock.json` (commitowany). Wszystko obsługuje
-`scripts/images` (rclone i oras lecą z Dockera, nic nie trzeba instalować).
-Zmniejszanie pod web robi Hugo przy buildzie (lokalnie i na GHA), nic z tego nie trafia do gita.
+`images.lock.json` (committed) says which files belong to the site. `scripts/images` handles
+everything (rclone and oras run from Docker, nothing to install). Hugo does all web resizing
+at build time (locally and on GHA); none of that output is committed.
 
-## Na świeżym klonie
+## Fresh clone
 
 ```sh
-make serve        # pobiera obrazki (scripts/images pull), potem hugo server na :1313
-make build        # to samo, ale jednorazowy build do public/
+make serve        # fetch images (scripts/images pull), then hugo server on :1313
+make build        # same, but a one-off build into public/
 ```
 
-`pull` bierze kolejno: lokalny cache `.images-cache/`, R2, GHCR. Hasła do R2 są w Bitwardenie
-(`andreas-r2`), `bin/bwx` zapyta o master password.
+`pull` tries the local cache `.images-cache/` first, then R2, then GHCR. R2 credentials are in
+Bitwarden (`andreas-r2`); `bin/bwx` prompts for the master password.
 
-## Nowa galeria / nowe obrazki
+## Adding a gallery / new images
 
-1. `make images-pull`, żeby mieć komplet lokalnie (bez tego `push` odmówi)
-2. Utwórz `content/page/<nazwa>/index.md` i wrzuć obok obrazki. Galerię w treści robi się tak:
+1. `make images-pull` so you have everything locally (`push` refuses otherwise)
+2. Create `content/page/<name>/index.md` and put the images next to it. Gallery markup:
 
    ```
    {{< gallery >}}
-     {{% galimg target="1.jpg" title="Tytuł" %}}Podpis w lightboxie{{% /galimg %}}
+     {{% galimg target="1.jpg" title="Title" %}}Caption shown in the lightbox{{% /galimg %}}
    {{< /gallery >}}
    ```
 
-   Miniatura domyślnie `200x150 smart` (`size=`, `mode=fill|fit|resize`), a lightbox
-   dostaje webp do 2400px (`full=`). Oryginały nigdy nie trafiają na stronę.
-   Wpis w menu: zobacz front matter `content/page/grandchildren/index.md`.
-3. `make serve` i sprawdź, że wygląda OK
-4. `make images-push`: wysyła nowe pliki do R2 i GHCR, aktualizuje `images.lock.json`
-5. `git add content/page/<nazwa>/index.md images.lock.json && git commit && git push`
+   Thumbnails default to `200x150 smart` (`size=`, `mode=fill|fit|resize`); the lightbox gets
+   a webp up to 2400px (`full=`). Originals are never published.
+   For a menu entry, copy the front matter of `content/page/grandchildren/index.md`.
+3. `make serve` and check it looks right
+4. `make images-push`: uploads new files to R2 + GHCR and updates `images.lock.json`
+5. `git add content/page/<name>/index.md images.lock.json && git commit && git push`
 
-Zmiana lub podmiana obrazka działa tak samo: podmień plik, `make images-push`, commit locka.
-Usunięcie: skasuj plik, `scripts/images push --prune`.
-`make images-status` pokazuje, co się różni od locka.
+Replacing an image works the same way: swap the file, `make images-push`, commit the lock.
+Deleting: remove the file, then `scripts/images push --prune`.
+`make images-status` shows what differs from the lock.
 
-## Jednorazowe rzeczy, gdyby coś przestało działać
+## One-time setup, if something stops working
 
-- **Push na GHCR** wymaga tokena `gh` z `write:packages`: `gh auth refresh -h github.com -s write:packages`
-- **CI** czyta R2 z sekretów repo `R2_ENDPOINT`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`
-  i `R2_BUCKET`. Bez nich bierze obrazki z GHCR przez `GITHUB_TOKEN`.
-  Ustawienie z Bitwardena:
+- **GHCR push** needs a `gh` token with `write:packages`: `gh auth refresh -h github.com -s write:packages`
+- **CI** reads R2 from the repo secrets `R2_ENDPOINT`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`
+  and `R2_BUCKET`; without them it falls back to GHCR via `GITHUB_TOKEN`. To set them from Bitwarden:
   ```sh
   item=$(bin/bwx item andreas-r2)
   jq -j '.login.uris[0].uri'  <<<"$item" | gh secret set R2_ENDPOINT
@@ -59,4 +58,6 @@ Usunięcie: skasuj plik, `scripts/images push --prune`.
   jq -j '.login.password'     <<<"$item" | gh secret set R2_SECRET_ACCESS_KEY
   jq -j '.fields[]|select(.name=="bucket").value' <<<"$item" | gh secret set R2_BUCKET
   ```
-- **Wymagania lokalnie**: docker, python3, `bw` (Bitwarden CLI, zalogowany), `gh`.
+- **Hugo version** is pinned to the same version in `docker-compose.yml` and the workflow.
+  Newer Hugo dropped the built-in LibSass the `stack` theme needs.
+- **Local requirements**: docker, python3, `bw` (Bitwarden CLI, logged in), `gh`.
